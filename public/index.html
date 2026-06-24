@@ -1,82 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Page title shown in the browser tab -->
-  <title>TrajectoryVis</title>
+    <title>Disease Trajectory Dashboard</title>
 
-  <!-- My CSS file -->
-  <link rel="stylesheet" href="./main.css" />
+    <link rel="stylesheet" href="./main.css">
 
-  <!-- D3 library -->
-  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <!-- d3-sankey library needed for the main vis -->
-  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 
-  <!--- main java script, this is where all the D3 will go -->
-  <script src="./main.js"></script>
+    <script src="./main.js" defer></script>
 </head>
+
 <body>
 
-  <div class="dashboard">
+<div class="dashboard">
+
+    <!-- HEADER -->
+
     <header class="header">
-      <h1>DISEASE TRAJECTORY VISUALIZATION</h1>
+        <h1>Disease Trajectory Dashboard</h1>
+        <p>
+            Interactive exploration of disease sequence data and multimorbidity pathways.
+        </p>
     </header>
-    </div>
+
+    <!-- FILTER PANEL -->
 
     <aside class="filters">
-      <h3>FILTERS</h3>
 
-      <label> DISEASE CODE:</label>
-      <input id="diseaseSearch" placeholder="Searching disease code .....">
+        <h2>Filters</h2>
 
-      <label> Trajectory Stage</label>
-      <select id="stageSelect">
-        <option value="all">All</option>
-        <option value="1">Stage 1</option>
-        <option value="2">Stage 2</option>
-        <option value="3">Stage 3</option>
-      </select>
+        <label for="diseaseSearch">Disease Search</label>
+        <input
+            type="text"
+            id="diseaseSearch"
+            placeholder="Search ICD code..."
+        >
 
+        <label for="stageFilter">Trajectory Stage</label>
+        <select id="stageFilter">
+            <option value="all">All Stages</option>
+            <option value="d1-d2">d1 → d2</option>
+            <option value="d2-d3">d2 → d3</option>
+            <option value="d3-d4">d3 → d4</option>
+        </select>
 
-      <label> Minimum Frequency:</label>
-      <input type="number" id="minFrequency" placeholder="Enter minimum frequency">
-      <p id="freqLabel">0</p>
+        <label for="frequencyFilter">Minimum Frequency</label>
+        <input
+            type="range"
+            id="frequencyFilter"
+            min="0"
+            max="100000"
+            value="0"
+        >
+
+        <p id="frequencyValue">0</p>
+
+        <button id="resetBtn">
+            Reset Filters
+        </button>
+
     </aside>
 
-    <!---- main content for visualisations-->
+    <!-- MAIN VISUALISATION -->
+
     <main class="main">
-      <h2> DISEASE PROGRESSION &nbsp;(d1 > d2 > d3 > d4)</h2>
-      <svg id="sankey">Sankey place holder</svg>
+
+        <h2>Disease Progression Pathways</h2>
+
+        <svg id="sankey"></svg>
+
     </main>
-    <aside class ="insights">
-      <h3>KEY INSIGHTS</h3>
-      <h4> Top Pathways</h4>
-      <ol id="toppathways"></ol>
-      <div class="kpi">
-        Most Common Pathway: <strong id="mostCommonPathway"></strong>
-      </div>      
-      <div class="kpi">
-        Highest Frequency <strong id="topCount"></strong>
-      </div>
 
-        <div class="kpi">
-          Total Transitions
-          <strong id="totalTransitions"></strong>
-        </div>
+    <!-- INSIGHTS PANEL -->
 
-        <div class="kpi">
-          Unique Diseases
-          <strong id="uniqueDiseases"></strong>
-        </div>
+    <aside class="insights">
+
+        <h2>Key Insights</h2>
+
+        <section class="insight-card">
+
+            <h3>Top Pathways</h3>
+
+            <ol id="topPathways">
+                <li>L03 → J18 → J69</li>
+                <li>L03 → F01 → J69</li>
+                <li>L03 → A41 → I50</li>
+            </ol>
+
+        </section>
+
+        <section class="insight-card">
+
+            <h3>Overview</h3>
+
+            <p>
+                <strong>Total Transitions:</strong>
+                <span id="totalTransitions">0</span>
+            </p>
+
+            <p>
+                <strong>Unique Diseases:</strong>
+                <span id="uniqueDiseases">0</span>
+            </p>
+
+            <p>
+                <strong>Highest Frequency:</strong>
+                <span id="highestFrequency">0</span>
+            </p>
+
+        </section>
+
+        <section class="insight-card">
+
+            <h3>Selected Disease</h3>
+
+            <p id="selectedDisease">
+                No disease selected.
+            </p>
+
+        </section>
+
     </aside>
+
+    <!-- FOOTER -->
+
     <footer class="footer">
-      <p>Created by: <a href="https://emma123456789102.github.io/">Emma Davidson </a></p>
+
+        <span>
+            MSc Dissertation Project
+        </span>
+
+        <span>
+            Disease Trajectory Visualisation Dashboard
+        </span>
+
     </footer>
-  </div>
-  <div class="tooltip" id="tooltip">  </div>
+
+</div>
 
 </body>
+
 </html>
