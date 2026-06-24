@@ -101,3 +101,45 @@ button{
     margin-top: 4px;
     color:#174ea6;
 }
+ol {
+    padding-left: 20px;
+    margin: 0;
+}
+.footer{
+    grid-column: 1/4;
+    padding: 10px 16px;
+    text-align:center;
+    font-size:12px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.tooltip{
+  position: absolute;
+  background: #111;
+  color: white;
+  padding: 9px 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.node rect {
+  stroke: #111;
+  stroke-width: 1px;
+}
+
+.node text {
+  font-size: 12px;
+  fill: #111;
+}
+
+.link {
+  fill: none;
+  stroke-opacity: 0.35;
+}
+
+.link:hover {
+  stroke-opacity: 0.8;
+}
