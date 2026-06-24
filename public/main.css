@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+    background: #f4f1ea;
+    font-family :Arial, Helvetica, sans-serif;
+    color:#111;
+
+}
+.dashboard{
+    display: grid;
+    grid-template-columns: 230px 1fr 270px;
+    grid-template-rows: 64px 1fr 42px ;
+    gap: 12px;
+    padding: 16px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.header, .filters, .main, .insights, .footer{
+ background:#fffdf8;
+ border:2px solid #222;
+ border-radius: 6px;
+}
+
+.header{
+    grid-column: 1/4;
+    padding: 12px 8px;
+}
+/* adding in the family styling to the h1 header for the main heading for the vis*/
+
+.header h1{
+    margin:0;
+    color:#174ea6;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:20px;
+    letter-spacing:0.5px;
+
+}
+
+.filters{
+    padding:16px;
+}
+
+.filters h3 , .insights h3{
+    margin:0;
+    font-size:16px;
+    color:#174ea6;
+    font-family:Arial, Helvetica, sans-serif;
+    letter-spacing:0.5px;
+}
+
+label{
+    display:block;
+    margin-top: 14px;
+    font-size:13px;
+    font-weight: bold;
+}
+
+input, select, button {
+    width:100%;
+    box-sizing:border-box;
+    margin-top:6px;
+    padding:8px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background:white;
+
+}
+
+.checkbox-row{
+    font-weight: normal;
+    margin-top:6px;
+}
+button{
+    cursor:pointer;
+    font-weight: bold;
+
+}
+
+.main{
+    padding:14px;
+    position: relative;
+}
+.main h2 {
+    margin: 0 0 8px 0;
+    text-align:center;
+    font-size: 16px;
+}
+
+#sankey {
+    width:100%;
+    height:500px;
+}
+.kpi {
+    border-top :1px solid #222;
+    padding-top: 10px;
+    margin-top:12px;
+}

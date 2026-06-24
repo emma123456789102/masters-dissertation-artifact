@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Page title shown in the browser tab -->
+  <title>TrajectoryVis</title>
+
+  <!-- My CSS file -->
+  <link rel="stylesheet" href="./main.css" />
+
+  <!-- D3 library -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <!-- d3-sankey library needed for the main vis -->
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
+  <!--- main java script, this is where all the D3 will go -->
+  <script src="./main.js"></script>
+</head>
+<body>
+
+  <div class="dashboard">
+    <header class="header">
+      <h1>DISEASE TRAJECTORY VISUALIZATION</h1>
+    </header>
+    </div>
+
+    <aside class="filters">
+      <h3>FILTERS</h3>
+
+      <label> DISEASE CODE:</label>
+      <input id="diseaseSearch" placeholder="Searching disease code .....">
+
+      <label> Trajectory Stage</label>
+      <select id="stageSelect">
+        <option value="all">All</option>
+        <option value="1">Stage 1</option>
+        <option value="2">Stage 2</option>
+        <option value="3">Stage 3</option>
+      </select>
+
+
+      <label> Minimum Frequency:</label>
+      <input type="number" id="minFrequency" placeholder="Enter minimum frequency">
+      <p id="freqLabel">0</p>
+    </aside>
+
+    <!---- main content for visualisations-->
+    <main class="main">
+      <h2> DISEASE PROGRESSION &nbsp;(d1 > d2 > d3 > d4)</h2>
+      <svg id="sankey">Sankey place holder</svg>
+    </main>
+    <aside class ="insights">
+      <h3>KEY INSIGHTS</h3>
+
+      
+    </aside>
