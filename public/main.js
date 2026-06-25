@@ -170,4 +170,16 @@ const colour = d3.scaleOrdinal()
     unique.add(d.Source);
     unique.add(d.Target);
     });
-  
+
+ d3.select("#topTransition")
+    .text(top[0] ? `${top[0].Source} → ${top[0].Target}` : "-");
+
+  d3.select("#topCount")
+    .text(top[0] ? top[0].Count.toLocaleString() : "-");
+
+  d3.select("#totalTransitions")
+    .text(data.length.toLocaleString());
+
+  d3.select("#uniqueDiseases")
+    .text(unique.size.toLocaleString());
+}
