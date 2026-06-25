@@ -21,6 +21,7 @@ body {
  border-radius: 6px;
 }
 
+
 .header{
     grid-column: 1/4;
     padding: 12px 8px;
