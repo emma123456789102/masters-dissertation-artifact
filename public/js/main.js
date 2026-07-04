@@ -1,27 +1,49 @@
-const csvFilePath = "data/trajectory_transitions.csv";
-
-const svg = d3.select("#sankey");
+const csvFilePath = "./data/trajectory_transitions.csv";
+let svg;
 let allData = [];
 let currentView = "sankey";
-const tooltip = d3.select("body").append("div")
-  .attr("class", "tooltip")
-  .style("opacity", 0);
-d3.csv(csvFilePath).then(data => {
-  console.log("CSV loaded:", data);
-  console.log("Columns:", data.columns);
+
+document.addEventListener("DOMContentLoaded", () => {
+  svg = d3.select("#sankey");
+
+  d3.csv(csvFilePath).then(data => {
+    console.log("CSV loaded:", data);
+    console.log("Columns:", data.columns);
 
   data.forEach(d => {
     d.source = d.source || d.Source;
     d.target = d.target || d.Target;
     d.stage = d.stage || d.Stage;
+    d.stage_start = d.stage_start || d.Stage_start;
     d.count = +(d.count || d.Count);
   });
-
-  allData = data.filter(d => d.source && d.target && d.stage && !isNaN(d.count));
-
+// code for the filter to remove any rows with missing or invalid data
+  allData = data.filter(d => 
+    d.source && 
+    d.target &&
+    d.stage &&
+     !isNaN(d.count));
+// for mind sence
+     console.log("the normaliesed data sample:", allData.slice(0, 5));
   setupButtons();
   drawDashboard();
+  });
 });
+
+function formatStage(stage) {
+  const labels ={
+    "d1": "Disease 1",
+    "d2": "Disease 2",
+    "d3": "Disease 3",
+    "d4": "Disease 4",
+    "d1-d2": "Transition from Disease 1 to Disease 2",
+    "d2-d3": "Transition from Disease 2 to Disease 3",
+    "d3-d4": "Transition from Disease 3 to Disease 4"
+  };
+  return labels[stage] || stage;
+  };
+
+
 
 function setupButtons() {
   d3.select("#stageFilter").on("change", drawDashboard);
@@ -62,7 +84,7 @@ function getFilteredData() {
   let data = allData.filter(d => d.count >= minFrequency);
 
   if (selectedStage !== "all") {
-    data = data.filter(d => d.stage === selectedStage);
+    data = data.filter(d => d.stage_start === selectedStage);
   }
 
   if (searchTerm !== "") {
@@ -74,23 +96,39 @@ function getFilteredData() {
 
   return data;
 }
-
 function buildGraph(data) {
+  const grouped = d3.rollups(
+    data,
+    v => d3.sum(v, d => +d.count),
+    d => d.source,
+    d => d.target,
+    d => d.stage
+  );
+
+  const links = [];
+
+  grouped.forEach(([source, targets]) => {
+    targets.forEach(([target, stages]) => {
+      stages.forEach(([stage, value]) => {
+        links.push({ source, target, stage, value });
+      });
+    });
+  });
+
+  const topLinks = links
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 80);
+
   const nodesMap = new Map();
 
-  data.forEach(d => {
+  topLinks.forEach(d => {
     nodesMap.set(d.source, { name: d.source });
     nodesMap.set(d.target, { name: d.target });
   });
 
   return {
     nodes: Array.from(nodesMap.values()),
-    links: data.map(d => ({
-      source: d.source,
-      target: d.target,
-      value: d.count,
-      stage: d.stage
-    }))
+    links: topLinks
   };
 }
 
@@ -106,6 +144,11 @@ function drawDashboard() {
   const data = getFilteredData();
   const graph = buildGraph(data);
 
+  // Display message if no data is available
+     console.log("Dashboard drawn with current view:", currentView);
+    console.log("Filtered data sample:", getFilteredData().slice(0, 5));
+  
+
   if (data.length === 0) {
     svg.append("text")
       .attr("x", width / 2)
@@ -116,9 +159,16 @@ function drawDashboard() {
     return;
   }
 
+
   if (currentView === "sankey") drawSankey(svg, graph, width, height);
-  if (currentView === "node") drawNodeLink(svg, graph, width, height);
-  if (currentView === "pathways") drawCommonPathways(svg, data, width, height);
+    //Test 
+  // svg.append("circle")
+  //   .attr("cx", width / 2)
+  //   .attr("cy", height / 2)
+  //   .attr("r", 50)
+  //   .attr("fill", "red");
+  // if (currentView === "node") drawNodeLink(svg, graph, width, height);
+  // if (currentView === "pathways") drawCommonPathways(svg, data, width, height);
 
   updateInsights(data);
 

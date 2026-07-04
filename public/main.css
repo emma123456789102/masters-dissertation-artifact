@@ -1,169 +1,41 @@
 body {
-    margin: 0;
-    background: #f4f1ea;
-    font-family :Arial, Helvetica, sans-serif;
-    color:#111;
-
-}
-.dashboard{
-    display: grid;
-    grid-template-columns: 230px 1fr 270px;
-    grid-template-rows: 64px 1fr 42px ;
-    gap: 12px;
-    padding: 16px;
-    height: 100vh;
-    box-sizing: 100vh;
-}
-
-.header, .filters, .main, .insights, .footer{
- background:#fffdf8;
- border:2px solid #222;
- border-radius: 6px;
-}
-
-
-.header{
-    grid-column: 1/4;
-    padding: 12px 8px;
-}
-/* adding in the family styling to the h1 header for the main heading for the vis*/
-
-.header h1{
-    margin:0;
-    color:#174ea6;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:20px;
-    letter-spacing:0.5px;
-
-}
-
-.filters{
-    padding:16px;
-}
-
-.filters h3 , .insights h3{
-    margin:0;
-    font-size:16px;
-    color:#174ea6;
-    font-family:Arial, Helvetica, sans-serif;
-    letter-spacing:0.5px;
-}
-
-label{
-    display:block;
-    margin-top: 14px;
-    font-size:13px;
-    font-weight: bold;
-}
-
-input, select, button {
-    width:100%;
-    box-sizing:border-box;
-    margin-top:6px;
-    padding:8px;
-    border: 1px solid #333;
-    border-radius: 4px;
-    background:white;
-
-}
-
-.checkbox-row{
-    font-weight: normal;
-    margin-top:6px;
-}
-button{
-    cursor:pointer;
-    font-weight: bold;
-
-}
-
-.main{
-    padding:14px;
-    position: relative;
-}
-.main h2 {
-    margin: 0 0 8px 0;
-    text-align:center;
-    font-size: 16px;
-}
-
-#sankey {
-    width:100%;
-    height:500px;
-}
-.kpi {
-    border-top :1px solid #222;
-    padding-top: 10px;
-    margin-top:12px;
-}
-.kpi strong {
-    display:block;
-    font-size: 20px;
-    margin-top: 4px;
-    color:#174ea6;
-}
-ol {
-    padding-left: 20px;
-    margin: 0;
-}
-.footer{
-    grid-column: 1/4;
-    padding: 10px 16px;
-    text-align:center;
-    font-size:12px;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-}
-.tooltip{
-  position: absolute;
-  background: #111;
-  color: white;
-  padding: 9px 11px;
-  border-radius: 6px;
-  font-size: 12px;
-  pointer-events: none;
-  opacity: 0;
-}
-
-.node rect {
-  stroke: #111;
-  stroke-width: 1px;
-}
-
-.node text {
-  font-size: 12px;
-  fill: #111;
-}
-
-.link {
-  fill: none;
-  stroke-opacity: 0.35;
-}
-
-.link:hover {
-  stroke-opacity: 0.8;
-}
-html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  min-height: 100%;
-  font-family: Arial, sans-serif;
   background: #f4f1ea;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #111;
 }
 
-.dashboard {
+html, body {
   width: 100%;
-  min-height: 100vh;
-  display: grid !important;
+  min-height: 100%;
+}
+
+/* Main dashboard layout */
+.dashboard {
+  display: grid;
   grid-template-columns: 240px minmax(500px, 1fr) 280px;
   grid-template-rows: auto 1fr auto;
   gap: 14px;
   padding: 16px;
+  min-height: 100vh;
   box-sizing: border-box;
 }
 
+/* Shared panel styling */
+.header,
+.filters,
+.main,
+.insights,
+.footer {
+  background: #fffdf8;
+  border: 2px solid #222;
+  border-radius: 8px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Grid positions */
 .header {
   grid-column: 1 / 4;
   grid-row: 1;
@@ -174,48 +46,175 @@ html, body {
   grid-row: 2;
 }
 
-.main,
-.main-viz {
+.main {
   grid-column: 2;
   grid-row: 2;
-  min-height: 600px;
+  min-height: 650px;
+  overflow: visible;
+  position: relative;
 }
 
 .insights {
   grid-column: 3;
   grid-row: 2;
+  font-size: 13px;
 }
 
 .footer {
   grid-column: 1 / 4;
   grid-row: 3;
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.header,
-.filters,
-.main,
-.main-viz,
-.insights,
-.footer {
-  background: #fffdf8;
-  border: 2px solid #222;
-  border-radius: 8px;
-  padding: 16px;
+/* Header */
+.header h1 {
+  margin: 0;
+  color: #174ea6;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+}
+
+.header p {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+}
+
+#informationBtn {
+  width: auto;
+  padding: 6px 10px;
+  margin-top: 10px;
+}
+
+/* Text headings */
+.filters h2,
+.insights h2,
+.main h2 {
+  margin-top: 0;
+  color: #174ea6;
+}
+
+.main h2 {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* Form controls */
+label {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+input,
+select,
+button {
+  width: 100%;
   box-sizing: border-box;
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: white;
 }
 
+button {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #eef3ff;
+}
+
+/* SVG visualisation area */
 #sankey {
   display: block;
   width: 100%;
   height: 560px;
   min-height: 560px;
-}
-
-.main {
-  min-height: 650px;
+  background: white;
   overflow: visible;
 }
 
+/* D3 elements */
+.link {
+  fill: none;
+  stroke-opacity: 0.65;
+}
+
+.link:hover {
+  stroke-opacity: 0.9;
+}
+
+.node rect {
+  stroke: #111;
+  stroke-width: 1px;
+}
+
+.node text {
+  fill: #111;
+  font-size: 11px;
+}
+
+#sankey path {
+  fill: none;
+}
+
+#sankey text {
+  fill: #111;
+  font-size: 11px;
+}
+
+#sankey rect {
+  stroke: #111;
+}
+
+/* Insight cards */
+.insight-card {
+  border-top: 1px solid #222;
+  padding-top: 10px;
+  margin-top: 12px;
+}
+
+ol {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.kpi {
+  border-top: 1px solid #222;
+  padding-top: 10px;
+  margin-top: 12px;
+}
+
+.kpi strong {
+  display: block;
+  font-size: 20px;
+  margin-top: 4px;
+  color: #174ea6;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background: #111827;
+  color: white;
+  padding: 9px 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1000;
+  max-width: 260px;
+}
+
+/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -250,24 +249,25 @@ html, body {
   cursor: pointer;
   font-weight: bold;
 }
-#sankey path {
-  fill: none !important;
-  stroke-opacity: 0.75 !important;
-}
 
-#sankey rect {
-  stroke: #111 !important;
-}
+/* Responsive fallback */
+@media (max-width: 950px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto auto;
+  }
 
-#sankey text {
-  fill: #111 !important;
-  font-size: 11px;
-}
+  .header,
+  .filters,
+  .main,
+  .insights,
+  .footer {
+    grid-column: 1;
+  }
 
-#sankey {
-  display: block;
-  width: 100%;
-  height: 560px;
-  min-height: 560px;
-  background: white;
+  .header { grid-row: 1; }
+  .filters { grid-row: 2; }
+  .main { grid-row: 3; }
+  .insights { grid-row: 4; }
+  .footer { grid-row: 5; }
 }
