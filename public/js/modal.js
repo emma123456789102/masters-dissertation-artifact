@@ -1,34 +1,60 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const infoButton = document.getElementById("informationBtn");
-    const modal = document.getElementById("informationModal");
-    const closeButton = modal.querySelector(".close");
+    const infoModal = document.getElementById("informationModal");
+    const infoClose = infoModal.querySelector(".close");
 
-    // Open modal
+    const ICDbutton = document.getElementById("ICDBtn");
+    const ICDModal = document.getElementById("ICDModal");
+    const ICDClose = ICDModal.querySelector(".close");
+
+    // Open info modal
     infoButton.addEventListener("click", () => {
-        modal.style.display = "flex";
-        modal.setAttribute("aria-hidden", "false");
+        infoModal.style.display = "flex";
+        infoModal.setAttribute("aria-hidden", "false");
     });
 
-    // Close modal
-    closeButton.addEventListener("click", () => {
-        modal.style.display = "none";
-        modal.setAttribute("aria-hidden", "true");
+    // Close info modal
+    infoClose.addEventListener("click", () => {
+        infoModal.style.display = "none";
+        infoModal.setAttribute("aria-hidden", "true");
     });
 
-    // Close when clicking outside
+    // Open ICD modal
+    ICDbutton.addEventListener("click", () => {
+        ICDModal.style.display = "flex";
+        ICDModal.setAttribute("aria-hidden", "false");
+    });
+
+    // Close ICD modal
+    ICDClose.addEventListener("click", () => {
+        ICDModal.style.display = "none";
+        ICDModal.setAttribute("aria-hidden", "true");
+    });
+
+    // Close when clicking outside any modal
     window.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            modal.style.display = "none";
-            modal.setAttribute("aria-hidden", "true");
+        // if click target is one of the modal overlays, hide it
+        if (event.target === infoModal) {
+            infoModal.style.display = "none";
+            infoModal.setAttribute("aria-hidden", "true");
+        } else if (event.target === ICDModal) {
+            ICDModal.style.display = "none";
+            ICDModal.setAttribute("aria-hidden", "true");
         }
     });
 
-    // Close with Escape key
+    // Close with Escape key — hide any visible modal
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-            modal.style.display = "none";
-            modal.setAttribute("aria-hidden", "true");
+            if (infoModal && infoModal.style.display === 'flex') {
+                infoModal.style.display = "none";
+                infoModal.setAttribute("aria-hidden", "true");
+            }
+            if (ICDModal && ICDModal.style.display === 'flex') {
+                ICDModal.style.display = "none";
+                ICDModal.setAttribute("aria-hidden", "true");
+            }
         }
     });
 

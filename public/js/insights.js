@@ -1,12 +1,23 @@
 function updateInsights(data) {
-  const top = [...data].sort((a, b) => b.count - a.count).slice(0, 5);
+  const pathCounts = new Map();
+
+  data.forEach(d => {
+    const path = `${d.source} → ${d.target}`;
+    const count = +d.count || 0;
+    pathCounts.set(path, (pathCounts.get(path) || 0) + count);
+  });
+
+  const top = Array.from(pathCounts.entries())
+    .sort(([, aCount], [, bCount]) => bCount - aCount)
+    .slice(0, 5)
+    .map(([path, count]) => ({ path, count }));
 
   const list = d3.select("#topPathways");
   list.selectAll("*").remove();
 
   top.forEach(d => {
     list.append("li")
-      .text(`${d.source} → ${d.target} (${d.count.toLocaleString()})`);
+      .text(`${d.path} (${d.count.toLocaleString()})`);
   });
 
   const unique = new Set();

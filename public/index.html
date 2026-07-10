@@ -31,13 +31,36 @@
         <p>
             Interactive exploration of disease sequence data and multimorbidity pathways.
         </p>
+        <div>
+          <label for="datasetSelect">Select Dataset</label>
+          <select id="datasetSelect">
+              <option value="dataset1">Dataset 1 - National</option>
+              <option value="dataset2">Dataset 2 - Fife and tayside</option>
+          </select>
+        </div>
         <button id="informationBtn" type="button" aria-label="Open information">
           i
         </button>
          <button id="ICDBtn" type="button" aria-label="Open ICD 10 Reference">
           ICD 10 Reference 
         </button>
-    
+     <div>
+      <label for="SexFilter">Sex</label>
+      <select id="SexFilter">
+          <option value="all">All</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+      </select>
+    </div>
+    <div>
+   <label for="ageFilter">Age group</label>
+<select id="ageFilter">
+  <option value="all">All</option>
+  <option value="18-34">18–34</option>
+  <option value="35-64">35–64</option>
+  <option value="65+">65+</option>
+</select> 
+</div>
     </header>
     <!-- INFORMATION MODAL i.e the pop up of information -->
     <div id="informationModal" class="modal" aria-hidden="true">
@@ -47,15 +70,17 @@
             <p>This dashboard shows disease transition pathways, using their code names to highlight the most common routes, and lets you filter by stage and frequency.</p>
             
         </div>
-        <!-- Modal for ICD 10 Reference -->
-        <div id="ICDModal" class="modal" aria-hidden="true">
-            <div class="modal-content">
-                <span class="close" aria-label="Close ICD 10 Reference">&times;</span>
-                <h2>ICD 10 Reference</h2>
-                <p>This is the ICD 10 reference information.</p>
-            </div>
-        </div>
     </div>
+    
+    <div id="ICDModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close" aria-label="Close ICD 10 Reference">&times;</span>
+            <h2>ICD 10 Reference</h2>
+            <p>This is the ICD 10 reference information.</p>
+        </div>
+        
+    </div>
+   
 
     <!-- FILTER PANEL -->
 
@@ -73,10 +98,10 @@
         <label for="stageFilter">Trajectory Stage</label>
         <select id="stageFilter">
             <option value="all">All Stages</option>
-            <option value="d1">Disease 1 </option>
-            <option value="d2">Disease 2 </option>
-            <option value="d3">Disease 3 </option>
-            <option value="d4">Disease 4 </option>
+            <option value="d1"> disease 1 </option>
+            <option value="d2">disease 2 </option>
+            <option value="d3">disease 3 </option>
+            <option value="d4">disease 4 </option>  
         </select>
 
         <label for="frequencyFilter">Minimum Frequency</label>
@@ -104,8 +129,7 @@
     <main class="main">
 
 
-        <svg id="sankey" width="800" height="560">
-       </svg>
+        <svg id="sankey"></svg>
         
 
     </main>
@@ -156,8 +180,18 @@
             <p id="selectedDisease">
                 No disease selected.
             </p>
+            <button id="selectedDiseaseRefBtn" class="reference-btn" hidden>View ICD reference</button>
 
         </section>
+        
+       <section class="insight-card">
+          <div class="zoom-controls">
+            <button id="zoomInBtn" type="button">+</button>
+            <button id="zoomOutBtn" type="button">−</button>
+            <button id="resetZoomBtn" type="button" class="resetZoomBtn">Reset</button>
+          </div>
+          </section>
+     
 
     </aside>
 
