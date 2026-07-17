@@ -70,7 +70,12 @@ function drawSankey(svg, graph, width, height) {
         Outgoing: ${outgoing}
       `);
     })
-    .on("mouseleave", hideTooltip);
+    .on("mouseleave", hideTooltip)
+    .on("click", (event, d) => {
+      if (window.selectDiseaseCode) {
+        window.selectDiseaseCode(d.name);
+      }
+    });
 
   node.append("text")
     .attr("x", d => d.x0 < width / 2 ? d.x1 + 8 : d.x0 - 8)

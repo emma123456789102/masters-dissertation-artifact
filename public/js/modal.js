@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const infoModal = document.getElementById("informationModal");
     const infoClose = infoModal.querySelector(".close");
 
-    const ICDbutton = document.getElementById("ICDBtn");
+    const ICDbutton = document.getElementById("ICDBtn") || document.getElementById("selectedDiseaseRefBtn");
     const ICDModal = document.getElementById("ICDModal");
     const ICDClose = ICDModal.querySelector(".close");
 
@@ -21,10 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Open ICD modal
-    ICDbutton.addEventListener("click", () => {
-        ICDModal.style.display = "flex";
-        ICDModal.setAttribute("aria-hidden", "false");
-    });
+    if (ICDbutton) {
+      ICDbutton.addEventListener("click", () => {
+          ICDModal.style.display = "flex";
+          ICDModal.setAttribute("aria-hidden", "false");
+      });
+    }
 
     // Close ICD modal
     ICDClose.addEventListener("click", () => {

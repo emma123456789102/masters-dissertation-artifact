@@ -36,31 +36,43 @@
           <select id="datasetSelect">
               <option value="dataset1">Dataset 1 - National</option>
               <option value="dataset2">Dataset 2 - Fife and tayside</option>
+              <option value="uploaded">Uploaded dataset</option>
           </select>
         </div>
         <button id="informationBtn" type="button" aria-label="Open information">
           i
         </button>
-         <button id="ICDBtn" type="button" aria-label="Open ICD 10 Reference">
-          ICD 10 Reference 
-        </button>
+        <button id="uploadDataBtn" type="button">Upload Data</button>
+        <input id="uploadDataInput" type="file" accept=".csv" hidden />
      <div>
-      <label for="SexFilter">Sex</label>
-      <select id="SexFilter">
+        <!--- the filters for sex only in dataset 2-->
+      <label for="sexFilter">Sex</label>
+      <select id="sexFilter">
           <option value="all">All</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
       </select>
     </div>
     <div>
-   <label for="ageFilter">Age group</label>
-<select id="ageFilter">
-  <option value="all">All</option>
-  <option value="18-34">18–34</option>
-  <option value="35-64">35–64</option>
-  <option value="65+">65+</option>
-</select> 
-</div>
+      <label for="ageFilter">Age group</label>
+      <select id="ageFilter">
+        <option value="all">All</option>
+        <option value="18-34">18–34</option>
+        <option value="35-64">35–64</option>
+        <option value="65+">65+</option>
+      </select>
+    </div>
+    <div>
+      <label for="simdFilter">SIMD</label>
+      <select id="simdFilter">
+        <option value="all">All</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
     </header>
     <!-- INFORMATION MODAL i.e the pop up of information -->
     <div id="informationModal" class="modal" aria-hidden="true">
@@ -76,9 +88,20 @@
         <div class="modal-content">
             <span class="close" aria-label="Close ICD 10 Reference">&times;</span>
             <h2>ICD 10 Reference</h2>
-            <p>This is the ICD 10 reference information.</p>
+            <dl class="icd-details">
+              <dt>Code</dt>
+              <dd id="icdModalCode">N/A</dd>
+
+              <dt>Chapter</dt>
+              <dd id="icdModalChapter">Chapter</dd>
+
+              <dt>Description</dt>
+              <dd id="icdModalDescription">Description</dd>
+
+              <dt>Block</dt>
+              <dd id="icdModalBlock">Block</dd>
+            </dl>
         </div>
-        
     </div>
    
 
@@ -175,7 +198,7 @@
 
         <section class="insight-card">
 
-            <h3>Selected Disease</h3>
+            <h3> Selected Disease</h3>
 
             <p id="selectedDisease">
                 No disease selected.
@@ -183,14 +206,20 @@
             <button id="selectedDiseaseRefBtn" class="reference-btn" hidden>View ICD reference</button>
 
         </section>
-        
-       <section class="insight-card">
+        <section class="insight-card">
+          <h3>ICD 10th revision</h3>
+          <p id="icdChapter">Chapter</p>
+          <p id="icdDescription">Description</p>
+          <p id="icdBlock">Block</p>
+        </section>
+
+        <section class="insight-card">
           <div class="zoom-controls">
             <button id="zoomInBtn" type="button">+</button>
             <button id="zoomOutBtn" type="button">−</button>
             <button id="resetZoomBtn" type="button" class="resetZoomBtn">Reset</button>
           </div>
-          </section>
+        </section>
      
 
     </aside>

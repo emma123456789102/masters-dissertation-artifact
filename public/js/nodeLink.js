@@ -74,7 +74,12 @@ function drawNodeLink(svg, graph, width, height) {
     .attr('fill', '#93c5fd')
     .attr('stroke', '#111')
     .attr('stroke-width', 1.2)
-    .call(drag(simulation));
+    .call(drag(simulation))
+    .on('click', (event, d) => {
+      if (window.selectDiseaseCode) {
+        window.selectDiseaseCode(d.name);
+      }
+    });
 
   node.append('title').text(d => `${d.name}\nLevel: ${d.level || 'unknown'}`);
 

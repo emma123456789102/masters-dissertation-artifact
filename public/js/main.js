@@ -1,15 +1,49 @@
+// Paths to the two CSV datasets used by the dashboard.
 const CSV_NATIONAL = "./data/trajectory_transitions.csv";
 const CSV_FIFE_TAYSIDE =
   "./data/dataset2_demographic_transitions.csv";
 
+// Global state variables shared across the dashboard.
 let svg;
 let allData = [];
 let currentView = "sankey";
 let currentDataset = "dataset1";
+let uploadedDataLoaded = false;
 let nodeLinkZoom = null;
+let icdLookup = new Map(); // Map to store ICD code lookups for the modal
 
+async function loadICDLookup() {
+  const rows = await d3.csv("./data/icd_lookup.csv");
+
+  icdLookup = new Map(
+    rows.map(row => [
+      row.code.trim().toUpperCase(),
+      row
+    ])
+  );
+}
+
+function getICDDetails(code) {
+  if (!code) return null;
+  return icdLookup.get(String(code).trim().toUpperCase()) || null;
+}
+
+function selectDiseaseCode(code) {
+  if (!code) return;
+
+  const normalizedCode = String(code).trim().toUpperCase();
+  const searchInput = d3.select("#diseaseSearch");
+
+  if (!searchInput.empty()) {
+    searchInput.property("value", normalizedCode);
+  }
+
+  updateSelectedDisease(normalizedCode);
+  drawDashboard();
+}
 /*
  * Convert values such as "<5" into a usable number.
+ * If a cell contains a count like "<5", we treat it as one below the limit.
  */
 function parseCount(raw) {
   if (raw == null || raw === "") return NaN;
@@ -32,6 +66,8 @@ function parseCount(raw) {
  * The disease1–disease4 fields are essential for filtering a
  * disease by its position within the complete trajectory.
  */
+// Normalize data from both datasets into a common structure.
+// This makes it easier to use the same rendering logic for both sources.
 function normalizeData(rawData) {
   return rawData
     .map(row => ({
@@ -116,12 +152,16 @@ function normalizeData(rawData) {
     );
 }
 
+// Set up the dashboard after the HTML document has fully loaded.
 document.addEventListener("DOMContentLoaded", async () => {
   svg = d3.select("#sankey");
+
+  await loadICDLookup();
 
   setupButtons();
   setupDatasetSelector();
   setupSelectedDiseaseButton();
+  setupUploadData();
 
   await loadDataset(CSV_NATIONAL, "dataset1");
 });
@@ -131,6 +171,7 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 async function loadDataset(path, datasetName) {
   try {
+    // Read the CSV, normalise the columns, and update the state.
     const rawData = await d3.csv(path);
 
     console.log("CSV loaded:", path);
@@ -138,6 +179,7 @@ async function loadDataset(path, datasetName) {
 
     allData = normalizeData(rawData);
     currentDataset = datasetName;
+    uploadedDataLoaded = false;
 
     console.log("Normalised rows:", allData.length);
     console.log("Normalised sample:", allData.slice(0, 5));
@@ -160,6 +202,7 @@ async function loadDataset(path, datasetName) {
   }
 }
 
+// Convert internal stage keys into human-readable labels.
 function formatStage(stage) {
   const labels = {
     d1: "Disease 1",
@@ -182,6 +225,7 @@ function getControlValue(selector, fallback = "all") {
   return element ? element.value : fallback;
 }
 
+// Attach event handlers to controls and buttons on the page.
 function setupButtons() {
   d3.select("#stageFilter")
     .on("change", drawDashboard);
@@ -190,7 +234,16 @@ function setupButtons() {
     .on("input", drawDashboard);
 
   d3.select("#diseaseSearch")
-    .on("input", drawDashboard);
+    .on("input", drawDashboard)
+    .on("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const code = String(event.target.value || "").trim();
+        if (code !== "") {
+          selectDiseaseCode(code);
+        }
+      }
+    });
 
   d3.select("#sexFilter")
     .on("change", () => {
@@ -262,6 +315,7 @@ function setupButtons() {
     .on("click", resetFilters);
 }
 
+// Visually mark the selected view button as active.
 function setActiveViewButton(activeId) {
   d3.selectAll(
     "#sankeyBtn, #nodeBtn, #pathwaysBtn"
@@ -279,7 +333,7 @@ function setActiveViewButton(activeId) {
  * the other two are returned to "all".
  */
 function resetOtherDemographicFilters(activeType) {
-  if (currentDataset !== "dataset2") return;
+  if (currentDataset !== "dataset2" && currentDataset !== "uploaded") return;
 
   if (activeType !== "sex") {
     d3.select("#sexFilter").property("value", "all");
@@ -295,6 +349,7 @@ function resetOtherDemographicFilters(activeType) {
 }
 
 function resetFilters() {
+  // Reset all filter controls back to their default state.
   d3.select("#stageFilter")
     .property("value", "all");
 
@@ -353,18 +408,20 @@ function getFilteredData() {
     "all"
   );
 
+  // Update the frequency label to show the current slider value.
   d3.select("#frequencyValue")
     .text(minFrequency.toLocaleString());
 
+  // Start by filtering out rows with invalid counts or below threshold.
   let data = allData.filter(row =>
     Number.isFinite(row.count) &&
     row.count >= minFrequency
   );
 
   /*
-   * Apply demographics only to Dataset 2.
+   * Apply demographics to Dataset 2 and uploaded datasets.
    */
-  if (currentDataset === "dataset2") {
+  if (currentDataset === "dataset2" || currentDataset === "uploaded") {
     if (selectedSex !== "all") {
       data = data.filter(row =>
         row.sex.toLowerCase() ===
@@ -394,48 +451,78 @@ function getFilteredData() {
    * returns trajectories where disease2 === "B52".
    */
   if (searchTerm !== "") {
-    const positionColumns = {
-      d1: "disease1",
-      d2: "disease2",
-      d3: "disease3",
-      d4: "disease4"
+    const allFieldsMatch = row => [
+      row.source,
+      row.target,
+      row.disease1,
+      row.disease2,
+      row.disease3,
+      row.disease4
+    ].some(code =>
+      String(code || "")
+        .trim()
+        .toUpperCase() === searchTerm
+    );
+
+    const positionChecks = {
+      d1: row => (
+        String(row.disease1 || "").trim().toUpperCase() === searchTerm ||
+        (row.stage === "d1-d2" && String(row.source || "").trim().toUpperCase() === searchTerm)
+      ),
+      d2: row => (
+        String(row.disease2 || row.disease1 || "").trim().toUpperCase() === searchTerm ||
+        ((row.stage === "d1-d2" || row.stage === "d2-d3") && [row.target, row.source].some(code =>
+          String(code || "").trim().toUpperCase() === searchTerm
+        ))
+      ),
+      d3: row => (
+        String(row.disease3 || row.disease2 || "").trim().toUpperCase() === searchTerm ||
+        ((row.stage === "d2-d3" || row.stage === "d3-d4") && [row.target, row.source].some(code =>
+          String(code || "").trim().toUpperCase() === searchTerm
+        ))
+      ),
+      d4: row => (
+        String(row.disease4 || "").trim().toUpperCase() === searchTerm ||
+        (row.stage === "d3-d4" && String(row.target || "").trim().toUpperCase() === searchTerm)
+      )
     };
 
     if (diseasePosition !== "all") {
-      const field = positionColumns[diseasePosition];
-
-      data = data.filter(row =>
-        String(row[field] || "")
-          .trim()
-          .toUpperCase() === searchTerm
-      );
+      const predicate = positionChecks[diseasePosition] || allFieldsMatch;
+      data = data.filter(predicate);
     } else {
-      data = data.filter(row =>
-        [
-          row.disease1,
-          row.disease2,
-          row.disease3,
-          row.disease4
-        ].some(code =>
-          String(code || "")
-            .trim()
-            .toUpperCase() === searchTerm
-        )
-      );
+      data = data.filter(allFieldsMatch);
     }
   }
 
   return data;
 }
 
+// Show or hide the selected disease label/button.
+// This is used when the user chooses a disease from the search results.
 function updateSelectedDisease(code) {
   const selected = d3.select("#selectedDisease");
   const button = document.getElementById(
     "selectedDiseaseRefBtn"
   );
+  const chapter = document.getElementById("icdChapter");
+  const description = document.getElementById("icdDescription");
+  const block = document.getElementById("icdBlock");
+  const modalCode = document.getElementById("icdModalCode");
+  const modalChapter = document.getElementById("icdModalChapter");
+  const modalDescription = document.getElementById("icdModalDescription");
+  const modalBlock = document.getElementById("icdModalBlock");
 
   if (!code) {
     selected.text("No disease selected.");
+
+    if (chapter) chapter.textContent = "Chapter";
+    if (description) description.textContent = "Description";
+    if (block) block.textContent = "Block";
+    if (modalCode) modalCode.textContent = "N/A";
+    if (modalChapter) modalChapter.textContent = "Chapter";
+    if (modalDescription) modalDescription.textContent = "Description";
+    if (modalBlock) modalBlock.textContent = "Block";
 
     if (button) {
       button.hidden = true;
@@ -445,19 +532,42 @@ function updateSelectedDisease(code) {
     return;
   }
 
-  selected.text(`Selected disease: ${code}`);
+  const details = getICDDetails(code);
 
   if (button) {
     button.hidden = false;
     button.dataset.icdCode = code;
   }
+
+  if (!details) {
+    selected.text(`Selected disease: ${code}`);
+    if (chapter) chapter.textContent = "Chapter";
+    if (description) description.textContent = "Description";
+    if (block) block.textContent = "Block";
+    if (modalCode) modalCode.textContent = code;
+    if (modalChapter) modalChapter.textContent = "Unknown chapter";
+    if (modalDescription) modalDescription.textContent = "No description available.";
+    if (modalBlock) modalBlock.textContent = "No block information available.";
+    return;
+  }
+
+  selected.html(`
+    <strong>${details.code}</strong><br>
+    ${details.name}
+  `);
+
+  if (chapter) chapter.textContent = details.chapter || "Unknown chapter";
+  if (description) description.textContent = details.description || "No description available.";
+  if (block) block.textContent = details.inclusions || details.source_datasets || "No block information available.";
+  if (modalCode) modalCode.textContent = details.code || code;
+  if (modalChapter) modalChapter.textContent = details.chapter || "Unknown chapter";
+  if (modalDescription) modalDescription.textContent = details.description || "No description available.";
+  if (modalBlock) modalBlock.textContent = details.inclusions || details.source_datasets || "No block information available.";
 }
 
 /*
- * Give each code a unique ID for each disease position.
- *
- * For example, L03 at Disease 1 and L03 at Disease 3 are
- * separate Sankey nodes.
+ * Build the node/link structure used by the D3 visualisations.
+ * Each node is unique to its disease position stage.
  */
 function buildGraph(data) {
   const nodesMap = new Map();
@@ -516,6 +626,7 @@ function buildGraph(data) {
   };
 }
 
+// Redraw the main dashboard whenever data or controls change.
 function drawDashboard() {
   if (!svg) return;
 
@@ -562,7 +673,9 @@ function drawDashboard() {
       .attr("y", height / 2)
       .attr("text-anchor", "middle")
       .text(
-        "No data are available for the selected filters."
+        currentDataset === "uploaded" && !uploadedDataLoaded
+          ? "No uploaded dataset is loaded. Please upload a CSV file."
+          : "No data are available for the selected filters."
       );
 
     updateInsights([]);
@@ -581,6 +694,7 @@ function drawDashboard() {
   updateInsights(data);
 }
 
+// Hook the dataset dropdown so the user can switch sources.
 function setupDatasetSelector() {
   const datasetSelect =
     document.getElementById("datasetSelect");
@@ -597,14 +711,53 @@ function setupDatasetSelector() {
           CSV_FIFE_TAYSIDE,
           "dataset2"
         );
-      } else {
+      } else if (event.target.value === "dataset1") {
         await loadDataset(
           CSV_NATIONAL,
           "dataset1"
         );
+      } else {
+        currentDataset = "uploaded";
+        if (!uploadedDataLoaded) {
+          allData = [];
+        }
+        updateDemographicControlState();
+        drawDashboard();
       }
     }
   );
+}
+
+function setupUploadData() {
+  const uploadBtn = document.getElementById("uploadDataBtn");
+  const uploadInput = document.getElementById("uploadDataInput");
+
+  if (!uploadBtn || !uploadInput) return;
+
+  uploadBtn.addEventListener("click", () => {
+    uploadInput.click();
+  });
+
+  uploadInput.addEventListener("change", async event => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const text = await file.text();
+    const rawData = d3.csvParse(text);
+
+    allData = normalizeData(rawData);
+    currentDataset = "uploaded";
+    uploadedDataLoaded = true;
+
+    const datasetSelect = document.getElementById("datasetSelect");
+    if (datasetSelect) {
+      datasetSelect.value = "uploaded";
+    }
+
+    updateDemographicControlState();
+    resetFilters();
+    drawDashboard();
+  });
 }
 
 /*
@@ -612,7 +765,7 @@ function setupDatasetSelector() {
  * because it contains no demographic subgroups.
  */
 function updateDemographicControlState() {
-  const disabled = currentDataset !== "dataset2";
+  const disabled = currentDataset !== "dataset2" && currentDataset !== "uploaded";
 
   ["sexFilter", "ageFilter", "simdFilter"]
     .forEach(id => {
@@ -628,6 +781,7 @@ function updateDemographicControlState() {
     });
 }
 
+// Open the ICD modal when the selected disease button is clicked.
 function setupSelectedDiseaseButton() {
   const button = document.getElementById(
     "selectedDiseaseRefBtn"
