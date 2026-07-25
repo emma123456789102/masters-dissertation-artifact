@@ -20,10 +20,8 @@ npm test
 Project layout
 
 - `public/` — static HTML and assets (entry `index.html`)
-- `src/` — JavaScript source, D3 visualizations
-- `data/` — datasets (keep large raw data out of repo)
-- `experiments/` — experiment configs and results
-- `paper/` — chapter templates and notes
+- 'public/js/' — JavaScript source, D3 visualizations
+- `public/data/` — datasets (keep large raw data out of repo)
 - `slides/` — presentation templates
 - `tests/` — basic CI tests (node-side smoke tests)
 
