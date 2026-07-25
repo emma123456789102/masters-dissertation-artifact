@@ -94,7 +94,7 @@ html, body {
   margin-top: 10px;
 }
 #SexFilter {
-  width: auto;
+  width: 6px 6px;
   padding: 6px 10px;
   margin-top: 10px;
 }
@@ -336,4 +336,60 @@ ol {
   .main { grid-row: 3; }
   .insights { grid-row: 4; }
   .footer { grid-row: 5; }
+}
+
+/* Compact header controls */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
+}
+
+/* Keep the title and description on their own rows */
+.header h1,
+.header > p {
+  flex: 0 0 100%;
+}
+
+/* Dataset, Sex, Age Group and SIMD controls */
+.header > div {
+  flex: 0 1 180px;
+  min-width: 130px;
+  max-width: 220px;
+}
+
+.header > div label {
+  margin-top: 0;
+}
+
+.header > div select {
+  width: 100%;
+}
+
+/* Make the information and upload buttons compact */
+.header > button {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: 36px;
+  margin-top: 0;
+  padding: 8px 14px;
+}
+
+#informationBtn {
+  width: 38px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Stack controls on narrow screens */
+@media (max-width: 600px) {
+  .header > div {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .header > button {
+    flex: 1 1 auto;
+  }
 }

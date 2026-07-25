@@ -2,7 +2,8 @@
 const CSV_NATIONAL = "./data/trajectory_transitions.csv";
 const CSV_FIFE_TAYSIDE =
   "./data/dataset2_demographic_transitions.csv";
-
+const DEFAULT_DISEASE_CODE = "M54";
+const DEFAULT_DISEASE_CODE_DTS2 ="I501";
 // Global state variables shared across the dashboard.
 let svg;
 let allData = [];
@@ -164,6 +165,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupUploadData();
 
   await loadDataset(CSV_NATIONAL, "dataset1");
+  // starting the dashboard with a manageable amount of trajectories
+  selectDiseaseCode(DEFAULT_DISEASE_CODE);
+  // Explain the dashboard after the default view is ready
+  openWelcomeModal();
 });
 
 /*
@@ -426,6 +431,7 @@ function getFilteredData() {
       data = data.filter(row =>
         row.sex.toLowerCase() ===
         selectedSex.toLowerCase()
+
       );
     }
 
@@ -711,11 +717,13 @@ function setupDatasetSelector() {
           CSV_FIFE_TAYSIDE,
           "dataset2"
         );
+        
+         selectDiseaseCode(DEFAULT_DISEASE_CODE_DTS2);
       } else if (event.target.value === "dataset1") {
         await loadDataset(
           CSV_NATIONAL,
           "dataset1"
-        );
+        ); 
       } else {
         currentDataset = "uploaded";
         if (!uploadedDataLoaded) {

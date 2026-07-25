@@ -1,0 +1,7 @@
+source,target,count,stage,start_stage,disease1,disease2,disease3,sex,age_group,simd,n_death,dataset
+A04,J18,12,d1-d2,d1,A04,J18,I50,Female,45-64,1,2,Dummy demographic
+J18,I50,12,d2-d3,d1,A04,J18,I50,Female,45-64,1,2,Dummy demographic
+A04,J18,8,d1-d2,d1,A04,J18,E11,Male,65-74,3,1,Dummy demographic
+J18,E11,8,d2-d3,d1,A04,J18,E11,Male,65-74,3,1,Dummy demographic
+C34,J44,5,d1-d2,d1,C34,J44,I50,Female,75+,5,3,Dummy demographic
+J44,I50,5,d2-d3,d1,C34,J44,I50,Female,75+,5,3,Dummy demographic

@@ -59,5 +59,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+    // open dashboard modal 
+    const welcomeModal = document.getElementById("welcomeModal");
+const startDashboardBtn = document.getElementById("startDashboardBtn");
+
+window.addEventListener("load", () => {
+    welcomeModal.style.display = "block";
+});
+
+startDashboardBtn.addEventListener("click", () => {
+    welcomeModal.style.display = "none";
+});
 
 });
