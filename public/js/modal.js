@@ -59,16 +59,32 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-    // open dashboard modal 
+    // open dashboard modal
     const welcomeModal = document.getElementById("welcomeModal");
-const startDashboardBtn = document.getElementById("startDashboardBtn");
+    const startDashboardBtn = document.getElementById("startDashboardBtn");
 
-window.addEventListener("load", () => {
-    welcomeModal.style.display = "block";
-});
+    function openWelcomeModal() {
+        if (welcomeModal) {
+            welcomeModal.style.display = "flex";
+            welcomeModal.setAttribute("aria-hidden", "false");
+        }
+    }
 
-startDashboardBtn.addEventListener("click", () => {
-    welcomeModal.style.display = "none";
-});
+    function closeWelcomeModal() {
+        if (welcomeModal) {
+            welcomeModal.style.display = "none";
+            welcomeModal.setAttribute("aria-hidden", "true");
+        }
+    }
+
+    window.addEventListener("load", () => {
+        openWelcomeModal();
+    });
+
+    if (startDashboardBtn) {
+        startDashboardBtn.addEventListener("click", () => {
+            closeWelcomeModal();
+        });
+    }
 
 });
