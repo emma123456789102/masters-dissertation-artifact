@@ -57,7 +57,12 @@ function parseCount(raw) {
     return Math.max(1, limit - 1);
   }
 
-  const number = Number(value.replace(/[^0-9.-]/g, ""));
+  const numericValue = value.replace(/[^0-9.-]/g, "");
+  if (numericValue === "" || !/\d/.test(value)) {
+    return NaN;
+  }
+
+  const number = Number(numericValue);
   return Number.isFinite(number) ? number : NaN;
 }
 
@@ -154,22 +159,24 @@ function normalizeData(rawData) {
 }
 
 // Set up the dashboard after the HTML document has fully loaded.
-document.addEventListener("DOMContentLoaded", async () => {
-  svg = d3.select("#sankey");
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", async () => {
+    svg = d3.select("#sankey");
 
-  await loadICDLookup();
+    await loadICDLookup();
 
-  setupButtons();
-  setupDatasetSelector();
-  setupSelectedDiseaseButton();
-  setupUploadData();
+    setupButtons();
+    setupDatasetSelector();
+    setupSelectedDiseaseButton();
+    setupUploadData();
 
-  await loadDataset(CSV_NATIONAL, "dataset1");
-  // starting the dashboard with a manageable amount of trajectories
-  selectDiseaseCode(DEFAULT_DISEASE_CODE);
-  // Explain the dashboard after the default view is ready
-  openWelcomeModal();
-});
+    await loadDataset(CSV_NATIONAL, "dataset1");
+    // starting the dashboard with a manageable amount of trajectories
+    selectDiseaseCode(DEFAULT_DISEASE_CODE);
+    // Explain the dashboard after the default view is ready
+    openWelcomeModal();
+  });
+}
 
 /*
  * Load a selected CSV and redraw the dashboard.
@@ -806,4 +813,13 @@ function setupSelectedDiseaseButton() {
     modal.style.display = "flex";
     modal.setAttribute("aria-hidden", "false");
   });
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    parseCount,
+    normalizeData,
+    formatStage,
+    buildGraph
+  };
 }
