@@ -76,6 +76,22 @@ Then clone the repository:
 ```bash
 git clone https://github.com/emma123456789102/masters-dissertation-artifact.git
 cd masters-dissertation-artifact
-```bash
+```
 
-## If there is any questions please, feel free to email me !!!
+Install the required dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Vite will display the local address used to access the dashboard in your browser.
+
+## Questions
+
+If you have any questions about the project, please feel free to contact me.
