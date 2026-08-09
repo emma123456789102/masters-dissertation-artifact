@@ -1,28 +1,81 @@
-# Master's Dissertation Artifact — D3 Web Artifact
+# Disease Trajectory Visualisation Dashboard
 
-This repository contains a web-based D3 visualization artifact for the master's dissertation. It includes a minimal development setup using Vite, a D3 starter visualization, example data layout and CI.
+This repository contains the software artifact developed for the MSc dissertation:
 
-Quick start
+**Visualising the Trajectory of Diseases Through Interactive Information Visualisation**
 
-PowerShell:
+The project is an interactive web-based dashboard for exploring disease trajectory data. It was developed to investigate how information visualisation and interactive filtering can support the exploration of ordered disease sequences and relationships between diagnoses.
+All Code is located within the Public Folder !!!
+## Features
 
-```powershell
-# install dependencies
-npm install
+The dashboard provides three complementary visualisation views:
 
-# Start the dev server
-npm run dev
+- **Sankey Diagram** – displays the progression of diseases across trajectory stages, with link width representing transition frequency.
+- **Node-Link Diagram** – provides an alternative representation of relationships between diseases.
+- **Common Pathways** – presents a simplified ranking of high-frequency disease transitions.
 
-# Run tests
-npm test
-```
+Additional functionality includes:
 
-Project layout
+- Search by ICD-10 disease code
+- Filter by trajectory stage
+- Filter by minimum transition frequency
+- Demographic filtering for compatible datasets, including sex, age group and SIMD
+- Dataset selection
+- Upload of compatible CSV datasets
+- ICD-10 contextual information
+- Summary statistics and pathway information
+- Interactive tooltips
+- Zoom and drag interaction within the node-link view
+- Reset functionality
+- Introductory guidance for new users
 
-- `public/` — static HTML and assets (entry `index.html`)
-- 'public/js/' — JavaScript source, D3 visualizations
-- `public/data/` — datasets (keep large raw data out of repo)
-- `slides/` — presentation templates
-- `tests/` — basic CI tests (node-side smoke tests)
+## Datasets
 
-See `CONTRIBUTING.md` for workflow notes.
+The dashboard was developed using two disease trajectory datasets:
+
+1. **Scottish National disease trajectory dataset**
+2. **Fife and Tayside disease trajectory dataset**
+
+The datasets contain ordered disease sequences represented using ICD-10 codes. The Fife and Tayside dataset additionally provides demographic information that can be explored using the dashboard filters.
+
+Raw trajectory data are transformed into transition-based records containing:
+
+- source disease
+- target disease
+- trajectory stage
+- transition frequency
+- retained trajectory information
+- demographic information where available
+
+Python pre-processing scripts used for this transformation are included in the `public/` directory.
+
+## Technologies
+
+The application was developed using:
+
+- HTML
+- CSS
+- JavaScript
+- D3.js
+- d3-sankey
+- Vite
+- Jest
+- Python and pandas for dataset preprocessing
+
+## Running the Application Locally
+
+### Requirements
+
+Install:
+
+- Node.js
+- npm
+
+Then clone the repository:
+
+```bash
+git clone https://github.com/emma123456789102/masters-dissertation-artifact.git
+cd masters-dissertation-artifact
+
+
+## If there is any questions please, feel free to email me !!!
